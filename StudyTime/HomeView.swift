@@ -13,6 +13,7 @@ struct HomeView: View {
         Text("今日の勉強時間")
         Text("目標")
         
+        
     }
 }
 
