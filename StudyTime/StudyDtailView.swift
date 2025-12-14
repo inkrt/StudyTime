@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StudyDtailView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    
     var body: some View {
         Text("詳細")
     }
@@ -16,5 +16,5 @@ struct StudyDtailView: View {
 
 #Preview {
     StudyDtailView()
-        .environmentObject(ViewModel())
+    
 }
