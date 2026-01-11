@@ -12,6 +12,11 @@ struct HomeView: View {
 
     var body: some View {
         NavigationView{
+        ZStack {
+            // 背景色
+            Color(UIColor(hex: "e0ffff"))
+                .ignoresSafeArea()
+
         VStack(spacing: 20){
             Image("tameshi")
                 .resizable()
@@ -38,7 +43,6 @@ struct HomeView: View {
                                 .foregroundColor(.secondary)
                             Text("\(viewModel.goalHours)時間")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.blue)
                         }
                     }
                     Spacer()
@@ -63,14 +67,15 @@ struct HomeView: View {
             NavigationLink(destination: StudyRoomView().environmentObject(viewModel.roomViewModel)) {
                 Text("勉強をする")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .frame(width: 200, height: 50)
-                    .background(Color.blue)
+                    .background(Color.white)
                     .cornerRadius(12)
             }
 //                    その後にどの友達とやる？みたいなのを追加したい
 
             }
+        }
         }
         .sheet(isPresented: $viewModel.showGoalSettings) {
             GoalSettingsView(goalText: $viewModel.goalText, goalHours: $viewModel.goalHours)
@@ -87,6 +92,11 @@ struct GoalSettingsView: View {
 
     var body: some View {
         NavigationView {
+            ZStack {
+                // 背景色
+                Color(UIColor(hex: "e0ffff"))
+                    .ignoresSafeArea()
+
             Form {
                 Section(header: Text("目標")) {
                     TextField("目標を入力", text: $goalText)
@@ -96,6 +106,8 @@ struct GoalSettingsView: View {
                     Stepper("\(goalHours)時間", value: $goalHours, in: 1...12)
                         .font(.system(size: 18, weight: .medium))
                 }
+            }
+            .scrollContentBackground(.hidden)
             }
             .navigationTitle("目標設定")
             .navigationBarTitleDisplayMode(.inline)

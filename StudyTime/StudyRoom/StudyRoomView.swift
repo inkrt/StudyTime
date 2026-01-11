@@ -14,7 +14,7 @@ struct StudyRoomView: View {
     var body: some View {
         ZStack {
             // 背景色
-            Color(UIColor.systemGroupedBackground)
+            Color(UIColor(hex: "e0ffff"))
                 .ignoresSafeArea()
 
             VStack(spacing: 30) {
@@ -22,7 +22,7 @@ struct StudyRoomView: View {
                 VStack(spacing: 8) {
                     Text(viewModel.isStudyMode ? "勉強時間" : "休憩時間")
                         .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(viewModel.isStudyMode ? .blue : .green)
+                        .foregroundColor(.primary)
 
                     // 科目表示
                     if viewModel.isStudyMode {
@@ -61,7 +61,7 @@ struct StudyRoomView: View {
                     Circle()
                         .trim(from: 0, to: viewModel.progress)
                         .stroke(
-                            viewModel.isStudyMode ? Color.blue : Color.green,
+                            Color(UIColor(hex: "e0ffff")),
                             style: StrokeStyle(lineWidth: 20, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
@@ -93,8 +93,8 @@ struct StudyRoomView: View {
                                 .fontWeight(.semibold)
                         }
                         .frame(width: 140, height: 55)
-                        .background(viewModel.isStudyMode ? Color.blue : Color.green)
-                        .foregroundColor(.white)
+                        .background(Color.white)
+                        .foregroundColor(.primary)
                         .cornerRadius(15)
                     }
 
@@ -127,7 +127,7 @@ struct StudyRoomView: View {
                     // 勉強時間設定
                     HStack {
                         Image(systemName: "book.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
                             .frame(width: 30)
                         Text("勉強時間")
                             .font(.system(size: 16, weight: .medium))
@@ -136,7 +136,7 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.studyMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -146,7 +146,7 @@ struct StudyRoomView: View {
                     // 休憩時間設定
                     HStack {
                         Image(systemName: "cup.and.saucer.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
                             .frame(width: 30)
                         Text("休憩時間")
                             .font(.system(size: 16, weight: .medium))
@@ -155,7 +155,7 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.breakMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.green)
+                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -179,6 +179,11 @@ struct SubjectSettingsView: View {
 
     var body: some View {
         NavigationView {
+            ZStack {
+                // 背景色
+                Color(UIColor(hex: "e0ffff"))
+                    .ignoresSafeArea()
+
             VStack(spacing: 20) {
                 // カスタム入力
                 VStack(alignment: .leading, spacing: 8) {
@@ -222,11 +227,11 @@ struct SubjectSettingsView: View {
                                             Spacer()
                                             if viewModel.studySubject == subject {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(.blue)
+                                                    .foregroundColor(Color(UIColor(hex: "e0ffff")))
                                             }
                                         }
                                         .padding()
-                                        .background(viewModel.studySubject == subject ? Color.blue.opacity(0.1) : Color.white)
+                                        .background(Color.white)
                                         .cornerRadius(12)
                                     }
                                 }
@@ -251,7 +256,7 @@ struct SubjectSettingsView: View {
                                 }) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 28))
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(Color(UIColor(hex: "e0ffff")))
                                 }
                                 .disabled(viewModel.newSubject.isEmpty)
                             }
@@ -264,6 +269,7 @@ struct SubjectSettingsView: View {
                 }
 
                 Spacer()
+            }
             }
             .navigationTitle("勉強科目")
             .navigationBarTitleDisplayMode(.inline)
