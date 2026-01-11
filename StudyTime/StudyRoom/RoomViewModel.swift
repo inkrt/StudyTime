@@ -32,7 +32,7 @@ class RoomViewModel: ObservableObject {
             UserDefaults.standard.set(studySubject, forKey: "studySubject")
         }
     }
-    @Published var subjectPresets: [String] = ["数学", "英語", "国語", "理科", "社会", "プログラミング", "その他"] {
+    @Published var subjectPresets: [String] = ["数学", "英語", "国語", "理科", "社会", "プログラミング"] {
         didSet {
             UserDefaults.standard.set(subjectPresets, forKey: "subjectPresets")
         }

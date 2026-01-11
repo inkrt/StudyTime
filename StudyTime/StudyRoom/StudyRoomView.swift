@@ -14,7 +14,7 @@ struct StudyRoomView: View {
     var body: some View {
         ZStack {
             // 背景色
-            Color(UIColor(hex: "e6eef5"))
+            Color(UIColor(hex: "c8d8e6"))
                 .ignoresSafeArea()
 
             VStack(spacing: 30) {
@@ -46,36 +46,13 @@ struct StudyRoomView: View {
                 }
                 .padding(.top, 40)
 
-                Spacer()
-
-                // 円形タイマー
-                ZStack {
-                    // 背景円
-                    Circle()
-                        .stroke(
-                            Color.gray.opacity(0.2),
-                            lineWidth: 20
-                        )
-
-                    // プログレス円
-                    Circle()
-                        .trim(from: 0, to: viewModel.progress)
-                        .stroke(
-                            Color(UIColor(hex: "e6eef5")),
-                            style: StrokeStyle(lineWidth: 20, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-                        .animation(.easeInOut(duration: 1), value: viewModel.progress)
-
-
-                    Image("tameshi")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
-                        .clipShape(Circle())
-                }
-                .frame(width: 280, height: 280)
-                .padding(.vertical, 20)
+                // アバター
+                Image("tameshi")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .clipShape(Circle())
+                    .padding(.vertical, 20)
 
                 // コントロールボタン
                 HStack(spacing: 20) {
@@ -113,9 +90,21 @@ struct StudyRoomView: View {
                         .cornerRadius(15)
                     }
                 }
-                .padding(.horizontal)
 
-                Spacer()
+                // 時間表示
+                HStack(spacing: 8) {
+                    Text(viewModel.timeString)
+                        .font(.system(size: 72, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+
+                    Text(viewModel.isRunning ? "実行中" : "一時停止中")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .padding(.top, 30)
+                }
+                .padding(.vertical, 10)
+
+        
 
                 // 設定セクション
                 VStack(spacing: 16) {
@@ -127,7 +116,6 @@ struct StudyRoomView: View {
                     // 勉強時間設定
                     HStack {
                         Image(systemName: "book.fill")
-                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 30)
                         Text("勉強時間")
                             .font(.system(size: 16, weight: .medium))
@@ -136,7 +124,6 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.studyMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -146,7 +133,6 @@ struct StudyRoomView: View {
                     // 休憩時間設定
                     HStack {
                         Image(systemName: "cup.and.saucer.fill")
-                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 30)
                         Text("休憩時間")
                             .font(.system(size: 16, weight: .medium))
@@ -155,7 +141,6 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.breakMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -176,12 +161,14 @@ struct StudyRoomView: View {
 struct SubjectSettingsView: View {
     @ObservedObject var viewModel: RoomViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var originalSubject: String = ""
+    @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
         NavigationView {
             ZStack {
                 // 背景色
-                Color(UIColor(hex: "e6eef5"))
+                Color(UIColor(hex: "c8d8e6"))
                     .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -194,6 +181,21 @@ struct SubjectSettingsView: View {
                         TextField("科目を入力", text: $viewModel.studySubject)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .font(.system(size: 18))
+                            .focused($isTextFieldFocused)
+                            .onAppear {
+                                originalSubject = viewModel.studySubject
+                            }
+                            .onChange(of: isTextFieldFocused) { oldValue, newValue in
+                                if newValue {
+                                    // フォーカスが当たったときに元の値を記録
+                                    originalSubject = viewModel.studySubject
+                                } else {
+                                    // フォーカスが外れたときに更新をチェック
+                                    if !originalSubject.isEmpty && originalSubject != viewModel.studySubject {
+                                        viewModel.updateSubjectInPresets(from: originalSubject, to: viewModel.studySubject)
+                                    }
+                                }
+                            }
                     }
                 }
                 .padding()
@@ -207,7 +209,7 @@ struct SubjectSettingsView: View {
                             .font(.headline)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("左にスワイプで削除")
+                        Text("長押しで削除")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -216,26 +218,24 @@ struct SubjectSettingsView: View {
                     ScrollView {
                         VStack(spacing: 12) {
                             ForEach(viewModel.subjectPresets, id: \.self) { subject in
-                                HStack {
-                                    Button(action: {
-                                        viewModel.studySubject = subject
-                                    }) {
-                                        HStack {
-                                            Text(subject)
-                                                .font(.system(size: 18, weight: .medium))
-                                                .foregroundColor(.primary)
-                                            Spacer()
-                                            if viewModel.studySubject == subject {
-                                                Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(Color(UIColor(hex: "e6eef5")))
-                                            }
+                                Button(action: {
+                                    viewModel.studySubject = subject
+                                }) {
+                                    HStack {
+                                        Text(subject)
+                                            .font(.system(size: 18, weight: .medium))
+                                            .foregroundColor(.primary)
+                                        Spacer()
+                                        if viewModel.studySubject == subject {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(Color(UIColor(hex: "c8d8e6")))
                                         }
-                                        .padding()
-                                        .background(Color.white)
-                                        .cornerRadius(12)
                                     }
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(12)
                                 }
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                .contextMenu {
                                     Button(role: .destructive) {
                                         viewModel.removeSubjectPreset(subject)
                                     } label: {
@@ -256,7 +256,7 @@ struct SubjectSettingsView: View {
                                 }) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 28))
-                                        .foregroundColor(Color(UIColor(hex: "e6eef5")))
+                                        .foregroundColor(Color(UIColor(hex: "c8d8e6")))
                                 }
                                 .disabled(viewModel.newSubject.isEmpty)
                             }

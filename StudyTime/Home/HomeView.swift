@@ -14,7 +14,7 @@ struct HomeView: View {
         NavigationView{
         ZStack {
             // 背景色
-            Color(UIColor(hex: "e6eef5"))
+            Color(UIColor(hex: "c8d8e6"))
                 .ignoresSafeArea()
 
         VStack(spacing: 20){
@@ -94,7 +94,7 @@ struct GoalSettingsView: View {
         NavigationView {
             ZStack {
                 // 背景色
-                Color(UIColor(hex: "e6eef5"))
+                Color(UIColor(hex: "c8d8e6"))
                     .ignoresSafeArea()
 
             Form {
