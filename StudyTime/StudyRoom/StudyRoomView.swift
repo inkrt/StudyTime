@@ -14,7 +14,7 @@ struct StudyRoomView: View {
     var body: some View {
         ZStack {
             // 背景色
-            Color(UIColor(hex: "e0ffff"))
+            Color(UIColor(hex: "e6eef5"))
                 .ignoresSafeArea()
 
             VStack(spacing: 30) {
@@ -61,7 +61,7 @@ struct StudyRoomView: View {
                     Circle()
                         .trim(from: 0, to: viewModel.progress)
                         .stroke(
-                            Color(UIColor(hex: "e0ffff")),
+                            Color(UIColor(hex: "e6eef5")),
                             style: StrokeStyle(lineWidth: 20, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
@@ -127,7 +127,7 @@ struct StudyRoomView: View {
                     // 勉強時間設定
                     HStack {
                         Image(systemName: "book.fill")
-                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 30)
                         Text("勉強時間")
                             .font(.system(size: 16, weight: .medium))
@@ -136,7 +136,7 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.studyMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -146,7 +146,7 @@ struct StudyRoomView: View {
                     // 休憩時間設定
                     HStack {
                         Image(systemName: "cup.and.saucer.fill")
-                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 30)
                         Text("休憩時間")
                             .font(.system(size: 16, weight: .medium))
@@ -155,7 +155,7 @@ struct StudyRoomView: View {
                             .labelsHidden()
                         Text("\(viewModel.breakMinutes)分")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                            .foregroundColor(Color(UIColor(hex: "e6eef5")))
                             .frame(width: 50, alignment: .trailing)
                     }
                     .padding()
@@ -181,7 +181,7 @@ struct SubjectSettingsView: View {
         NavigationView {
             ZStack {
                 // 背景色
-                Color(UIColor(hex: "e0ffff"))
+                Color(UIColor(hex: "e6eef5"))
                     .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -227,7 +227,7 @@ struct SubjectSettingsView: View {
                                             Spacer()
                                             if viewModel.studySubject == subject {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                                                    .foregroundColor(Color(UIColor(hex: "e6eef5")))
                                             }
                                         }
                                         .padding()
@@ -256,7 +256,7 @@ struct SubjectSettingsView: View {
                                 }) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 28))
-                                        .foregroundColor(Color(UIColor(hex: "e0ffff")))
+                                        .foregroundColor(Color(UIColor(hex: "e6eef5")))
                                 }
                                 .disabled(viewModel.newSubject.isEmpty)
                             }
