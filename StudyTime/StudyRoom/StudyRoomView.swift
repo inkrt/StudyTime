@@ -19,10 +19,32 @@ struct StudyRoomView: View {
 
             VStack(spacing: 30) {
                 // ヘッダー
-                Text(viewModel.isStudyMode ? "勉強時間" : "休憩時間")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(viewModel.isStudyMode ? .blue : .green)
-                    .padding(.top, 40)
+                VStack(spacing: 8) {
+                    Text(viewModel.isStudyMode ? "勉強時間" : "休憩時間")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(viewModel.isStudyMode ? .blue : .green)
+
+                    // 科目表示
+                    if viewModel.isStudyMode {
+                        Button(action: {
+                            viewModel.showSubjectSettings = true
+                        }) {
+                            HStack(spacing: 4) {
+                                Text(viewModel.studySubject)
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(20)
+                        }
+                    }
+                }
+                .padding(.top, 40)
 
                 Spacer()
 
@@ -142,6 +164,115 @@ struct StudyRoomView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
+            }
+        }
+        .sheet(isPresented: $viewModel.showSubjectSettings) {
+            SubjectSettingsView(viewModel: viewModel)
+        }
+    }
+}
+
+// 科目設定画面
+struct SubjectSettingsView: View {
+    @ObservedObject var viewModel: RoomViewModel
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                // カスタム入力
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("科目名")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    HStack {
+                        TextField("科目を入力", text: $viewModel.studySubject)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .font(.system(size: 18))
+                    }
+                }
+                .padding()
+
+                Divider()
+
+                // プリセット選択
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("よく使う科目")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("左にスワイプで削除")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal)
+
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(viewModel.subjectPresets, id: \.self) { subject in
+                                HStack {
+                                    Button(action: {
+                                        viewModel.studySubject = subject
+                                    }) {
+                                        HStack {
+                                            Text(subject)
+                                                .font(.system(size: 18, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                            if viewModel.studySubject == subject {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(.blue)
+                                            }
+                                        }
+                                        .padding()
+                                        .background(viewModel.studySubject == subject ? Color.blue.opacity(0.1) : Color.white)
+                                        .cornerRadius(12)
+                                    }
+                                }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.removeSubjectPreset(subject)
+                                    } label: {
+                                        Label("削除", systemImage: "trash")
+                                    }
+                                }
+                            }
+
+                            // 新しい科目を追加
+                            HStack {
+                                TextField("新しい科目を追加", text: $viewModel.newSubject)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .font(.system(size: 16))
+
+                                Button(action: {
+                                    viewModel.addSubjectPreset(viewModel.newSubject)
+                                    viewModel.newSubject = ""
+                                }) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.system(size: 28))
+                                        .foregroundColor(.blue)
+                                }
+                                .disabled(viewModel.newSubject.isEmpty)
+                            }
+                            .padding()
+                            .background(Color.gray.opacity(0.05))
+                            .cornerRadius(12)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+
+                Spacer()
+            }
+            .navigationTitle("勉強科目")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完了") {
+                        dismiss()
+                    }
+                }
             }
         }
     }

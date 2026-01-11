@@ -10,7 +10,9 @@ import SwiftUI
 struct StudyDtailView: View {
     
     var body: some View {
-        Text("詳細")
+        Image("tameshi")
+            .resizable()
+            .frame(width: 400, height: 400)
     }
 }
 
