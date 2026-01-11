@@ -16,13 +16,13 @@ struct ContentView: View {
                         .tabItem {
                             Label("home", systemImage: "house")
                         }
-                        .tag(1)
+                    
 
                     StudyDtailView()
                         .tabItem {
                             Label("Detail", systemImage: "list.star")
                         }
-                        .tag(2)
+                   
 
                 }
     }

@@ -53,4 +53,10 @@ class RoomViewModel: ObservableObject {
         let seconds = remainingTime % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+
+    var progress: CGFloat {
+        let totalTime = isStudyMode ? studyMinutes * 60 : breakMinutes * 60
+        guard totalTime > 0 else { return 0 }
+        return CGFloat(remainingTime) / CGFloat(totalTime)
+    }
 }

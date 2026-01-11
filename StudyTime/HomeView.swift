@@ -19,16 +19,14 @@ struct HomeView: View {
             Text("今日の勉強時間")
             Text("目標")
             
-                NavigationLink{
-                    StudyRoomView()
-                    
-                } label: {
-                    Text("勉強をする")
+               
+            Text("勉強をする")
 //                    その後にどの友達とやる？みたいなのを追加したい
-                }
+                
             }
         }
     }
+    
 }
 
 
