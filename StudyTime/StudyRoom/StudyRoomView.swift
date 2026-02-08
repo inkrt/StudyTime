@@ -6,22 +6,39 @@
 //
 
 import SwiftUI
-
+import SwiftData
 
 struct StudyRoomView: View {
     @EnvironmentObject var viewModel: RoomViewModel
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ZStack {
             // 背景色
             Color(UIColor(hex: "c8d8e6"))
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea(.all)
 
-            VStack(spacing: 30) {
-                // ヘッダー
-                VStack(spacing: 8) {
+            VStack(spacing: 20) {
+                // ヘッダーと設定ボタン
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        viewModel.showTimeSettings = true
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.top, 10)
+                }
+
+                Spacer()
+
+                // タイトルと科目
+                VStack(spacing: 12) {
                     Text(viewModel.isStudyMode ? "勉強時間" : "休憩時間")
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.primary)
 
                     // 科目表示
@@ -31,28 +48,43 @@ struct StudyRoomView: View {
                         }) {
                             HStack(spacing: 4) {
                                 Text(viewModel.studySubject)
-                                    .font(.system(size: 18, weight: .medium))
+                                    .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.secondary)
                                 Image(systemName: "pencil.circle.fill")
-                                    .font(.system(size: 16))
+                                    .font(.system(size: 14))
                                     .foregroundColor(.secondary)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
                             .background(Color.gray.opacity(0.1))
-                            .cornerRadius(20)
+                            .cornerRadius(16)
                         }
                     }
                 }
-                .padding(.top, 40)
+
+                Spacer()
+
+                // 時間表示
+                VStack(spacing: 8) {
+                    Text(viewModel.timeString)
+                        .font(.system(size: 80, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+
+                    Text(viewModel.isRunning ? "実行中" : "一時停止中")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
 
                 // アバター
                 Image("tameshi")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 150, height: 150)
                     .clipShape(Circle())
-                    .padding(.vertical, 20)
+
+                Spacer()
 
                 // コントロールボタン
                 HStack(spacing: 20) {
@@ -69,10 +101,10 @@ struct StudyRoomView: View {
                             Text(viewModel.isRunning ? "停止" : "開始")
                                 .fontWeight(.semibold)
                         }
-                        .frame(width: 140, height: 55)
+                        .frame(width: 140, height: 50)
                         .background(Color.white)
                         .foregroundColor(.primary)
-                        .cornerRadius(15)
+                        .cornerRadius(12)
                     }
 
                     // リセットボタン
@@ -84,75 +116,24 @@ struct StudyRoomView: View {
                             Text("リセット")
                                 .fontWeight(.semibold)
                         }
-                        .frame(width: 140, height: 55)
+                        .frame(width: 140, height: 50)
                         .background(Color.gray.opacity(0.2))
                         .foregroundColor(.primary)
-                        .cornerRadius(15)
+                        .cornerRadius(12)
                     }
                 }
-
-                // 時間表示
-                HStack(spacing: 8) {
-                    Text(viewModel.timeString)
-                        .font(.system(size: 72, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
-
-                    Text(viewModel.isRunning ? "実行中" : "一時停止中")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .padding(.top, 30)
-                }
-                .padding(.vertical, 10)
-
-        
-
-                // 設定セクション
-                VStack(spacing: 16) {
-                    Text("設定")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    // 勉強時間設定
-                    HStack {
-                        Image(systemName: "book.fill")
-                            .frame(width: 30)
-                        Text("勉強時間")
-                            .font(.system(size: 16, weight: .medium))
-                        Spacer()
-                        Stepper("\(viewModel.studyMinutes)分", value: $viewModel.studyMinutes, in: 1...60)
-                            .labelsHidden()
-                        Text("\(viewModel.studyMinutes)分")
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 50, alignment: .trailing)
-                    }
-                    .padding()
-                    .background(Color.white.opacity(0.8))
-                    .cornerRadius(12)
-
-                    // 休憩時間設定
-                    HStack {
-                        Image(systemName: "cup.and.saucer.fill")
-                            .frame(width: 30)
-                        Text("休憩時間")
-                            .font(.system(size: 16, weight: .medium))
-                        Spacer()
-                        Stepper("\(viewModel.breakMinutes)分", value: $viewModel.breakMinutes, in: 1...30)
-                            .labelsHidden()
-                        Text("\(viewModel.breakMinutes)分")
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 50, alignment: .trailing)
-                    }
-                    .padding()
-                    .background(Color.white.opacity(0.8))
-                    .cornerRadius(12)
-                }
-                .padding(.horizontal, 20)
                 .padding(.bottom, 30)
             }
         }
         .sheet(isPresented: $viewModel.showSubjectSettings) {
             SubjectSettingsView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showTimeSettings) {
+            TimeSettingsView(viewModel: viewModel)
+        }
+        .onAppear {
+            viewModel.modelContext = modelContext
+            print("StudyRoomView: modelContextを設定しました - \(modelContext)")
         }
     }
 }
@@ -272,6 +253,128 @@ struct SubjectSettingsView: View {
             }
             }
             .navigationTitle("勉強科目")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完了") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 時間設定画面
+struct TimeSettingsView: View {
+    @ObservedObject var viewModel: RoomViewModel
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationView {
+            ZStack {
+                // 背景色
+                Color(UIColor(hex: "c8d8e6"))
+                    .ignoresSafeArea()
+
+                Form {
+                    // 勉強時間設定
+                    Section(header: Text("勉強時間")) {
+                        VStack(spacing: 16) {
+                            // 合計表示
+                            HStack {
+                                Text("合計")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(viewModel.studyMinutes)分")
+                                    .font(.system(size: 18, weight: .semibold))
+                            }
+
+                            Divider()
+
+                            // 時間設定
+                            HStack {
+                                Text("時間")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Stepper("", value: Binding(
+                                    get: { viewModel.studyHours },
+                                    set: { viewModel.studyHours = $0 }
+                                ), in: 0...3)
+                                .labelsHidden()
+                                Text("\(viewModel.studyHours)時間")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .frame(width: 70, alignment: .trailing)
+                            }
+
+                            // 分設定
+                            HStack {
+                                Text("分")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Stepper("", onIncrement: {
+                                    viewModel.studyMinutesOnly = (viewModel.studyMinutesOnly + 10) % 60
+                                }, onDecrement: {
+                                    viewModel.studyMinutesOnly = (viewModel.studyMinutesOnly - 10 + 60) % 60
+                                })
+                                .labelsHidden()
+                                Text("\(viewModel.studyMinutesOnly)分")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .frame(width: 70, alignment: .trailing)
+                            }
+                        }
+                    }
+
+                    // 休憩時間設定
+                    Section(header: Text("休憩時間")) {
+                        VStack(spacing: 16) {
+                            // 合計表示
+                            HStack {
+                                Text("合計")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(viewModel.breakMinutes)分")
+                                    .font(.system(size: 18, weight: .semibold))
+                            }
+
+                            Divider()
+
+                            // 時間設定
+                            HStack {
+                                Text("時間")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Stepper("", value: Binding(
+                                    get: { viewModel.breakHours },
+                                    set: { viewModel.breakHours = $0 }
+                                ), in: 0...1)
+                                .labelsHidden()
+                                Text("\(viewModel.breakHours)時間")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .frame(width: 70, alignment: .trailing)
+                            }
+
+                            // 分設定
+                            HStack {
+                                Text("分")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Stepper("", onIncrement: {
+                                    viewModel.breakMinutesOnly = (viewModel.breakMinutesOnly + 10) % 60
+                                }, onDecrement: {
+                                    viewModel.breakMinutesOnly = (viewModel.breakMinutesOnly - 10 + 60) % 60
+                                })
+                                .labelsHidden()
+                                Text("\(viewModel.breakMinutesOnly)分")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .frame(width: 70, alignment: .trailing)
+                            }
+                        }
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("時間設定")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
